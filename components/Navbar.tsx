@@ -108,17 +108,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onResetSeedData}
             disabled={isResetting}
             title="Reset in-memory dataset to demo seed reports"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition-all disabled:opacity-50"
+            aria-label="Reset demo dataset"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition-all disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin text-purple-400' : 'text-slate-400'}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin text-purple-400' : 'text-slate-400'}`} aria-hidden="true" />
             <span className="hidden sm:inline">Reset Demo Data</span>
           </button>
 
           <button
             onClick={onOpenReportModal}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white ai-gradient-bg hover:opacity-95 transition-all shadow-lg shadow-purple-600/30 active:scale-95"
+            aria-label="Submit new lost or found report"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white ai-gradient-bg hover:opacity-95 transition-all shadow-lg shadow-purple-600/30 active:scale-95 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
           >
-            <PlusCircle className="w-4 h-4" />
+            <PlusCircle className="w-4 h-4" aria-hidden="true" />
             <span>Submit Report</span>
           </button>
         </div>

@@ -68,6 +68,18 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Close modal on Escape key
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,39 +158,40 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
       <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden my-8">
         
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl ai-gradient-bg flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+              <Sparkles className="w-5 h-5 text-white" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Submit Lost or Found Report</h3>
+              <h3 id="report-modal-title" className="text-lg font-bold text-white">Submit Lost or Found Report</h3>
               <p className="text-xs text-slate-400">Log item details for Gemini AI multimodal matching</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+            aria-label="Close submit report modal"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Demo Quick Fill Presets */}
         <div className="px-6 py-3 bg-purple-950/40 border-b border-purple-900/40 flex flex-wrap items-center gap-2 text-xs">
           <span className="font-semibold text-purple-300 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-purple-400" /> Demo Quick Fill:
+            <Sparkles className="w-3.5 h-3.5 text-purple-400" aria-hidden="true" /> Demo Quick Fill:
           </span>
           {PRESETS.map((p) => (
             <button
               key={p.name}
               type="button"
               onClick={() => applyPreset(p)}
-              className="px-2.5 py-1 rounded-lg bg-purple-900/50 hover:bg-purple-800/60 border border-purple-500/30 text-purple-200 transition-all font-medium"
+              className="px-2.5 py-1 rounded-lg bg-purple-900/50 hover:bg-purple-800/60 border border-purple-500/30 text-purple-200 transition-all font-medium focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
             >
               {p.name}
             </button>
@@ -188,38 +201,42 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
         {/* Form Content */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
           {errorMsg && (
-            <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2" role="alert">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {/* Report Type Toggle */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-2">Report Type *</label>
-            <div className="grid grid-cols-2 gap-3">
+            <span className="block text-xs font-semibold text-slate-300 mb-2">Report Type *</span>
+            <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Select report type">
               <button
                 type="button"
+                role="radio"
+                aria-checked={type === 'lost'}
                 onClick={() => setType('lost')}
-                className={`py-3 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border transition-all ${
+                className={`py-3 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border transition-all focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none ${
                   type === 'lost'
                     ? 'bg-rose-950/80 border-rose-500 text-rose-400 shadow-lg shadow-rose-900/30'
                     : 'bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-700'
                 }`}
               >
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" aria-hidden="true"></span>
                 <span>I Lost An Item</span>
               </button>
               <button
                 type="button"
+                role="radio"
+                aria-checked={type === 'found'}
                 onClick={() => setType('found')}
-                className={`py-3 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border transition-all ${
+                className={`py-3 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border transition-all focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                   type === 'found'
                     ? 'bg-emerald-950/80 border-emerald-500 text-emerald-400 shadow-lg shadow-emerald-900/30'
                     : 'bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-700'
                 }`}
               >
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
                 <span>I Found An Item</span>
               </button>
             </div>
@@ -227,30 +244,31 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
 
           {/* Photo Upload Zone */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-2">
-              Photo Upload <span className="text-slate-500 font-normal">(Optional but recommended for AI visual matching)</span>
+            <label htmlFor="report-photo-input" className="block text-xs font-semibold text-slate-300 mb-2">
+              Photo Upload <span className="text-slate-400 font-normal">(Optional but recommended for AI visual matching)</span>
             </label>
             {imagePreview ? (
               <div className="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 h-44 flex items-center justify-center">
-                <img src={imagePreview} alt="Preview" className="h-full object-contain" />
+                <img src={imagePreview} alt="Uploaded item preview" className="h-full object-contain" />
                 <button
                   type="button"
                   onClick={() => { setImageBase64(''); setImagePreview(''); }}
-                  className="absolute top-3 right-3 p-1.5 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700"
+                  aria-label="Remove uploaded image"
+                  className="absolute top-3 right-3 p-1.5 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center h-36 border-2 border-dashed border-slate-700 hover:border-purple-500/60 rounded-2xl cursor-pointer bg-slate-950/40 hover:bg-slate-950/80 transition-all group">
+              <label htmlFor="report-photo-input" className="flex flex-col items-center justify-center h-36 border-2 border-dashed border-slate-700 hover:border-purple-500/60 rounded-2xl cursor-pointer bg-slate-950/40 hover:bg-slate-950/80 transition-all group focus-within:ring-2 focus-within:ring-purple-500">
                 <div className="flex flex-col items-center justify-center text-center p-4">
-                  <Upload className="w-7 h-7 text-purple-400 mb-2 group-hover:scale-110 transition-transform" />
+                  <Upload className="w-7 h-7 text-purple-400 mb-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
                   <p className="text-xs font-medium text-slate-300 mb-1">
                     Click or drag photo here to upload
                   </p>
                   <p className="text-[11px] text-slate-500">PNG, JPG, WEBP up to 5MB</p>
                 </div>
-                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                <input id="report-photo-input" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
               </label>
             )}
           </div>
@@ -258,22 +276,24 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
           {/* Title & Category Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Item Title *</label>
+              <label htmlFor="report-title-input" className="block text-xs font-semibold text-slate-300 mb-1.5">Item Title *</label>
               <input
+                id="report-title-input"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Sony WH-1000XM4 Black Headphones"
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500"
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Category *</label>
+              <label htmlFor="report-category-select" className="block text-xs font-semibold text-slate-300 mb-1.5">Category *</label>
               <select
+                id="report-category-select"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500"
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -284,15 +304,16 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label htmlFor="report-description-input" className="block text-xs font-semibold text-slate-300 mb-1.5">
               Detailed Description * <span className="text-slate-400 font-normal">(Include scratches, stickers, brand marks)</span>
             </label>
             <textarea
+              id="report-description-input"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Describe color, brand, distinct scratches, stickers, case type, or specific distinguishing marks..."
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500"
+              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500"
               required
             ></textarea>
           </div>
@@ -300,28 +321,30 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
           {/* Location & Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Campus Location *</label>
+              <label htmlFor="report-location-input" className="block text-xs font-semibold text-slate-300 mb-1.5">Campus Location *</label>
               <div className="relative">
-                <MapPin className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                <MapPin className="w-4 h-4 text-slate-500 absolute left-3 top-3" aria-hidden="true" />
                 <input
+                  id="report-location-input"
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g. Science Library 2nd Floor Study Desk"
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500"
                   required
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Date & Time Lost/Found</label>
+              <label htmlFor="report-time-input" className="block text-xs font-semibold text-slate-300 mb-1.5">Date & Time Lost/Found</label>
               <div className="relative">
-                <Clock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                <Clock className="w-4 h-4 text-slate-500 absolute left-3 top-3" aria-hidden="true" />
                 <input
+                  id="report-time-input"
                   type="datetime-local"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500"
                 />
               </div>
             </div>
@@ -329,15 +352,16 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
 
           {/* Contact / Drop-off info */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label htmlFor="report-contact-input" className="block text-xs font-semibold text-slate-300 mb-1.5">
               Contact / Drop-off Location Reference
             </label>
             <input
+              id="report-contact-input"
               type="text"
               value={contactInfo}
               onChange={(e) => setContactInfo(e.target.value)}
               placeholder="e.g. Student Union Desk or alex.student@campus.edu"
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500"
+              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500"
             />
           </div>
 
@@ -346,23 +370,23 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-all"
+              className="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-all focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white ai-gradient-bg hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-purple-600/30"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white ai-gradient-bg hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-purple-600/30 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
             >
               {isSubmitting ? (
                 <>
-                  <Sparkles className="w-4 h-4 animate-spin" />
+                  <Sparkles className="w-4 h-4 animate-spin" aria-hidden="true" />
                   <span>Submitting...</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4" aria-hidden="true" />
                   <span>Submit Report</span>
                 </>
               )}

@@ -7,8 +7,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { reportId } = body;
 
-    if (!reportId) {
-      return NextResponse.json({ error: 'reportId parameter is required' }, { status: 400 });
+    if (!reportId || typeof reportId !== 'string' || reportId.trim().length === 0) {
+      return NextResponse.json({ error: 'Valid reportId string parameter is required' }, { status: 400 });
     }
 
     const targetReport = getReportById(reportId);

@@ -19,6 +19,18 @@ export const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   onFindMatches,
   onResolve,
 }) => {
+  // Close modal on Escape key
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !report) return null;
 
   const isLost = report.type === 'lost';
@@ -29,7 +41,7 @@ export const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="details-modal-title">
       <div className="relative w-full max-w-xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden my-6">
         
         {/* Header */}
@@ -45,40 +57,41 @@ export const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+            aria-label="Close report details modal"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Media Preview */}
         {report.imageBase64 && (
           <div className="w-full h-64 bg-slate-950 overflow-hidden relative border-b border-slate-800">
-            <img src={report.imageBase64} alt={report.title} className="w-full h-full object-contain" />
+            <img src={report.imageBase64} alt={`Photo of ${report.title}`} className="w-full h-full object-contain" />
           </div>
         )}
 
         {/* Content */}
         <div className="p-6 space-y-4">
           <div>
-            <h3 className="text-xl font-extrabold text-white mb-2">{report.title}</h3>
+            <h3 id="details-modal-title" className="text-xl font-extrabold text-white mb-2">{report.title}</h3>
             <p className="text-sm text-slate-300 leading-relaxed">{report.description}</p>
           </div>
 
           <div className="space-y-2 pt-2 border-t border-slate-800 text-xs text-slate-300">
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-purple-400 flex-shrink-0" />
+              <MapPin className="w-4 h-4 text-purple-400 flex-shrink-0" aria-hidden="true" />
               <span className="font-semibold text-white">Location:</span>
               <span>{report.location}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-slate-500 flex-shrink-0" />
+              <Clock className="w-4 h-4 text-slate-500 flex-shrink-0" aria-hidden="true" />
               <span className="font-semibold text-white">Time:</span>
               <span>{formattedDate}</span>
             </div>
             {report.contactInfo && (
               <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <Mail className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-hidden="true" />
                 <span className="font-semibold text-white">Contact / Desk Ref:</span>
                 <span>{report.contactInfo}</span>
               </div>
@@ -91,14 +104,14 @@ export const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
           {!isMatched ? (
             <button
               onClick={() => onResolve(report.id)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-all flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-all flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
             >
-              <CheckCircle2 className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Mark as Resolved</span>
             </button>
           ) : (
             <span className="text-xs text-purple-400 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4" /> Item Resolved
+              <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> Item Resolved
             </span>
           )}
 
@@ -109,9 +122,9 @@ export const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                 onFindMatches(report);
               }}
               disabled={isMatched}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white ai-gradient-bg hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-1.5 shadow-md shadow-purple-600/30"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white ai-gradient-bg hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-1.5 shadow-md shadow-purple-600/30 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" aria-hidden="true" />
               <span>Find AI Matches</span>
             </button>
           </div>

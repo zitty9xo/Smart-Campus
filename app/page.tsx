@@ -288,10 +288,12 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
               
               {/* Type Tabs */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0" role="tablist" aria-label="Filter reports by status">
                 <button
+                  role="tab"
+                  aria-selected={activeTab === 'all'}
                   onClick={() => setActiveTab('all')}
-                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none ${
                     activeTab === 'all'
                       ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-lg shadow-purple-950/50'
                       : 'bg-slate-900/60 text-slate-400 hover:text-white border border-transparent'
@@ -300,30 +302,36 @@ export default function Home() {
                   All Campus Reports ({reports.length})
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={activeTab === 'lost'}
                   onClick={() => setActiveTab('lost')}
-                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none ${
                     activeTab === 'lost'
                       ? 'bg-rose-950/80 text-rose-300 border border-rose-500/40 shadow-lg shadow-rose-950/50'
                       : 'bg-slate-900/60 text-slate-400 hover:text-white border border-transparent'
                   }`}
                 >
-                  <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <span className="w-2 h-2 rounded-full bg-rose-500" aria-hidden="true"></span>
                   <span>Lost Items ({stats.lostCount})</span>
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={activeTab === 'found'}
                   onClick={() => setActiveTab('found')}
-                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                     activeTab === 'found'
                       ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 shadow-lg shadow-emerald-950/50'
                       : 'bg-slate-900/60 text-slate-400 hover:text-white border border-transparent'
                   }`}
                 >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
                   <span>Found Items ({stats.foundCount})</span>
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={activeTab === 'matched'}
                   onClick={() => setActiveTab('matched')}
-                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none ${
                     activeTab === 'matched'
                       ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-lg shadow-purple-950/50'
                       : 'bg-slate-900/60 text-slate-400 hover:text-white border border-transparent'
@@ -334,12 +342,13 @@ export default function Home() {
               </div>
 
               {/* Category Pills */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" role="group" aria-label="Filter reports by category">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    aria-pressed={selectedCategory === cat}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none ${
                       selectedCategory === cat
                         ? 'bg-slate-800 text-white border border-slate-700'
                         : 'text-slate-400 hover:text-white hover:bg-slate-900'
@@ -349,7 +358,6 @@ export default function Home() {
                   </button>
                 ))}
               </div>
-
             </div>
 
             {/* Reports Grid */}

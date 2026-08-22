@@ -38,27 +38,39 @@ export const MatchDrawerModal: React.FC<MatchDrawerModalProps> = ({
 }) => {
   const [selectedDeskNotice, setSelectedDeskNotice] = useState<string | null>(null);
 
+  // Close modal on Escape key
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !targetReport) return null;
 
   const oppositeTypeLabel = targetReport.type === 'lost' ? 'Found' : 'Lost';
   const formattedModel = formatModelName(modelName);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="match-modal-title">
       <div className="relative w-full max-w-4xl bg-slate-900 border border-purple-500/30 rounded-3xl shadow-2xl overflow-hidden my-6">
         
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl ai-gradient-bg flex items-center justify-center shadow-lg shadow-purple-600/30">
-              <Sparkles className="w-5 h-5 text-white animate-pulse" />
+              <Sparkles className="w-5 h-5 text-white animate-pulse" aria-hidden="true" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white">Gemini AI Match Results</h3>
+                <h3 id="match-modal-title" className="text-lg font-bold text-white">Gemini AI Match Results</h3>
                 {isAiGenerated ? (
                   <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-950 border border-purple-500/40 text-purple-300 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping inline-block"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping inline-block" aria-hidden="true"></span>
                     Live {formattedModel}
                   </span>
                 ) : (
@@ -66,7 +78,7 @@ export const MatchDrawerModal: React.FC<MatchDrawerModalProps> = ({
                     className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-950/80 border border-amber-500/40 text-amber-300 flex items-center gap-1"
                     title="GEMINI_API_KEY is not set or API failed — using built-in heuristic matcher"
                   >
-                    <AlertTriangle className="w-3 h-3 text-amber-400" />
+                    <AlertTriangle className="w-3 h-3 text-amber-400" aria-hidden="true" />
                     Demo Mode · Fallback
                   </span>
                 )}
@@ -79,9 +91,10 @@ export const MatchDrawerModal: React.FC<MatchDrawerModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+            aria-label="Close match results modal"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
