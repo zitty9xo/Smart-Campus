@@ -194,7 +194,7 @@ Instructions:
     for (const modelName of candidateModels) {
       try {
         console.log(`[Gemini Matcher] Trying model '${modelName}'...`);
-        const model = genAI.getGenerativeModel({ model: modelName, requestOptions: { timeout: 8000 } });
+        const model = genAI.getGenerativeModel({ model: modelName }, { timeout: 15000 });
         response = await model.generateContent(contents);
         usedModel = modelName;
         console.log(`[Gemini Matcher] Successfully received response using '${modelName}'!`);
